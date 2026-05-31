@@ -146,7 +146,7 @@ flips sign after minification. **Shipped bundle (min+gzip): 13490→14100
 | 1 | LOC | **−8.7%** | ✅ measured |
 | 2 | Tokens (cl100k) | **−1.5%** | ✅ measured |
 | 3 | Bundle size (min+gzip) | **+7.7%** | ✅ measured (precise net Vite build pending) |
-| 4 | Pixel parity | functional parity ✅ 84/84 Vitest; pixel-diff pending | ⏳ Percy/pixelmatch |
+| 4 | Pixel parity | functional parity ✅ 102/102 Vitest; pixel-diff pending | ⏳ Percy/pixelmatch |
 | 5 | Lighthouse (FCP/TTI/LCP) | expected parity (same React runtime) | ⏳ preview deploy + LH-CI |
 | 6 | Cold start | not measured on papertopia (pythscript baseline: <50 ms / ~1.1 KB vs Pyodide 6.5 MB) | ⏳ edge-deploy (#12) |
 | 7 | Memory footprint | expected parity (same runtime) | ⏳ profiling harness |
@@ -196,7 +196,7 @@ also passes the full dual-track Counter contract in-suite (15 tests).
 ## Parity
 
 Both specs proven by the dual-track Vitest suite (one shared contract per
-component pair). Full frontend suite: **84/84**.
+component pair). Full frontend suite: **102/102**.
 
 ---
 
