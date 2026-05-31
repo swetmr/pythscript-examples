@@ -45,7 +45,7 @@ PythScript is **not** an in-browser interpreter (no 5–10 MB Pyodide-style runt
 
 Language is deeply connected to how people think and feel — syntax, semantics, and readability matter as much as aesthetics. PythScript is designed to eliminate the syntactic struggle and reduce cognitive load for Python developers, who can now pick up frontend work in far less time by learning React or Next.js rather than a new language (the framework matters more than the language).
 
-The elegant way is usually also the more concise one. On a real application, PythScript compiles from ~9% fewer lines of code (up to ~34% on typed, logic-heavy code) and — depending on code character — from near-parity up to ~17% fewer source tokens than the equivalent TypeScript, while keeping JavaScript idioms such as optional chaining (`?.`) and nullish coalescing (`??`) available in Python syntax. An optional `.psc` compression layer adds further token savings on top. These efficiencies are a *bonus, not the headline* — the reason to reach for PythScript is staying in Python with React-grade parity.
+The elegant way is usually also the more concise one. On a real application, PythScript compiles from ~9% fewer lines of code (up to ~34% on typed, logic-heavy code) and — depending on code character — from near-parity up to ~20% fewer source tokens than the equivalent TypeScript, while keeping JavaScript idioms such as optional chaining (`?.`) and nullish coalescing (`??`) available in Python syntax. An optional `.psc` compression layer adds further token savings on top. These efficiencies are a *bonus, not the headline* — the reason to reach for PythScript is staying in Python with React-grade parity.
 
 The hybrid compilation to JS and WASM serves compute-heavy work and edge/serverless deployments, where the ~1 KB runtime fits envelopes that interpreter-based tools blow.
 
@@ -88,7 +88,7 @@ The frontend of **papertopia** (a multi-agent app) is built **twice**: once in R
 | Metric | Result | Notes |
 |---|---|---|
 | Lines of code | **−8.7%** | range −1% … −40%; biggest wins on markup-heavy code |
-| Source tokens (cl100k) | **−1.5%** | range −0.6% (presentational) … −16.8% (typed/logic-heavy) |
+| Source tokens (cl100k) | **−1.5%** | codebase-dependent: near-parity (presentational) up to ~−20% (typed/logic-heavy) |
 | Shipped bundle (min+gzip) | **+7.7%** | PythScript ships *slightly larger* here — see below |
 | Functional parity | **102 / 102 tests green** | shared-contract React-vs-PythScript suite ([log](./proof/dual-track-parity-summary.txt)) |
 
@@ -98,7 +98,7 @@ logic-heavy code is where Python's token edge is largest.
 
 ### How to read these numbers honestly
 
-- **PythScript wins the source metrics** (lines of code always; tokens up to −17% on typed/logic-heavy code). On purely presentational, inline-style-heavy UI, source tokens are near parity.
+- **PythScript wins the source metrics** (lines of code always; tokens up to ~−20% on typed/logic-heavy code, before the optional `.psc` layer). On purely presentational, inline-style-heavy UI, source tokens are near parity.
 - **PythScript ships a slightly larger bundle** for this app. We report this openly: call-site codegen wrappers survive minification. It's an upstream compiler improvement on our roadmap, not a config fix — and we do **not** claim a bundle-size reduction.
 - **Token/LOC savings are a bonus, not the headline.** The reason to use PythScript is the developer experience: staying in Python with React-grade parity. The size deltas are a measured side effect, reported as ranges.
 
