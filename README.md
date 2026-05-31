@@ -23,7 +23,7 @@ No server, no deploy, no compiler access needed — the evidence is checked into
 1. **Input → output, side by side.** [`examples/Counter.ps`](./examples/Counter.ps) sits next to its real compiled [`examples/compiled/Counter.js`](./examples/compiled/Counter.js); [`examples/similarity.ps`](./examples/similarity.ps) next to its compiled [`similarity.js`](./examples/compiled/similarity.js) **+ a real 291-byte `similarity.wasm`** + the generated [JS↔WASM bridge](./examples/compiled/similarity.glue.js). Python in, JS + WASM out — see [`examples/compiled/`](./examples/compiled).
 2. **Measured benchmark + parity, honest ranges.** The [dual-track benchmark](#the-dual-track-benchmark) reports LOC / token / bundle deltas as ranges across real code types — including where PythScript ships a *slightly larger* bundle. Functional parity is **102/102 tests green** ([run log](./proof/dual-track-parity-summary.txt)): each component built twice (React oracle + PythScript) through one shared contract. Nothing cherry-picked.
 3. **Third-party-verifiable CI.** The `examples checks` badge above runs the repo's checks on every push (compiled-output drift + `.psc` round-trip on pre-expanded fixtures) — green without any private code.
-4. **937 compiler tests passing.** `cargo test --workspace` on the private compiler repo: **937 passed, 0 failed** across 8 test layers (CPython differential, browser pixel parity, auto-route E2E, fuzz). Full summary: [`proof/cargo-test-summary.txt`](./proof/cargo-test-summary.txt) — *private compiler repo, access on request*.
+4. **913 compiler tests passing.** `cargo test --workspace` on the private compiler repo: **913 passed, 0 failed** across 8 test layers (CPython differential, browser pixel parity, auto-route E2E, fuzz). Full per-crate summary (lines sum to 913): [`proof/cargo-test-summary.txt`](./proof/cargo-test-summary.txt) — *private compiler repo, access on request*.
 
 ---
 
@@ -38,6 +38,18 @@ No server, no deploy, no compiler access needed — the evidence is checked into
 | **Production-grade** | 900+ passing compiler tests · 124K LOC/sec compile · runtime ~7,750× smaller than Pyodide |
 
 PythScript is **not** an in-browser interpreter (no 5–10 MB Pyodide-style runtime) and **not** a limited transpiler. It is a real compiler: Python in, idiomatic JS + WASM out.
+
+---
+
+## Design Philosophy
+
+Language is deeply connected to how people think and feel — syntax, semantics, and readability matter as much as aesthetics. PythScript is designed to eliminate the syntactic struggle and reduce cognitive load for Python developers, who can now pick up frontend work in far less time by learning React or Next.js rather than a new language (the framework matters more than the language).
+
+The elegant way is usually also the more concise one. On a real application, PythScript compiles from ~9% fewer lines of code (up to ~34% on typed, logic-heavy code) and — depending on code character — from near-parity up to ~17% fewer source tokens than the equivalent TypeScript, while bringing Python's ergonomics and conveniences like optional chaining and nullish coalescing to the frontend. An optional `.psc` compression layer adds further token savings on top. These efficiencies are a *bonus, not the headline* — the reason to reach for PythScript is staying in Python with React-grade parity.
+
+The hybrid compilation to JS and WASM serves compute-heavy work and edge/serverless deployments, where the ~1 KB runtime fits envelopes that interpreter-based tools blow.
+
+Finally, even if AI-generated code is the future, readability, efficiency, and aesthetics still matter.
 
 ---
 
