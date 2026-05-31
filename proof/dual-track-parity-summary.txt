@@ -3,19 +3,31 @@ Command: npx vitest run
 Date: 2026-05-31   Result: 102 passed, 0 failed (23 test files)
 Source: private application repo (access on request). Each component is built
 twice — React/TypeScript (the known-good oracle) and PythScript (.ps) — and both
-run through ONE shared contract test. Where a .psc (compressed) sibling exists,
-it runs the same contract too. Identical assertions pass on every track.
-
-Representative shared-contract pairs (excerpt of the run):
-  Counter.tsx (React reference)            ✓ 4/4
-  Counter.ps  (PythScript implementation)  ✓ 4/4
-  Counter.psc (compressed PythScript)      ✓ 4/4
-  PaperList.tsx (React reference)          ✓
-  PaperList.ps  (PythScript)               ✓
-  PaperView.tsx / .ps                       ✓
-  PaperChunkViewer.tsx / .ps  (dual-track)  ✓
-  Dual-track parity (B-001 regression guard): initial DOM matches React vs PythScript ✓
+run through ONE shared contract test; where a .psc (compressed) sibling exists, it
+runs the same contract too. The per-file test counts below sum to 102.
 ----------------------------------------------------------------------
- Test Files  23 passed (23)
-      Tests  102 passed (102)
+  components/AgentCard.test.tsx                        4 tests
+  components/Counter.test.tsx                         15 tests
+  components/GapsPanel.test.tsx                        4 tests
+  components/MetaCard.test.tsx                         2 tests
+  components/PaperChunkViewer.dualtrack.test.tsx       3 tests
+  components/PaperList.test.tsx                        8 tests
+  components/PaperView.test.tsx                        8 tests
+  components/PdfPreview.test.tsx                       2 tests
+  components/ReviewerVerdict.test.tsx                  2 tests
+  components/RunEventStream.test.tsx                   3 tests
+  components/StageTimeline.test.tsx                    3 tests
+  hooks/use_run_events.test.tsx                        4 tests
+  lib/decorators.test.ts                               5 tests
+  lib/errors.test.ts                                   4 tests
+  lib/similarity.ps.test.ts                            5 tests
+  lib/similarity.test.ts                               6 tests
+  pages/pages.test.tsx                                 2 tests
+  pages/Runs.test.tsx                                  3 tests
+  papertopia/dualtrack.test.tsx                        4 tests
+  papertopia/Papertopia.test.tsx                       3 tests
+  papertopia/PaperView.test.tsx                        3 tests
+  papertopia/StudioAgents.test.tsx                     4 tests
+  src/App.test.tsx                                     5 tests
 ----------------------------------------------------------------------
+TOTAL: 102 passed, 0 failed across 23 files
