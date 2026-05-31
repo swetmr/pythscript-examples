@@ -22,7 +22,7 @@ No server, no deploy, no compiler access needed — the evidence is checked into
 
 1. **Input → output, side by side.** [`examples/Counter.ps`](./examples/Counter.ps) sits next to its real compiled [`examples/compiled/Counter.js`](./examples/compiled/Counter.js); [`examples/similarity.ps`](./examples/similarity.ps) next to its compiled [`similarity.js`](./examples/compiled/similarity.js) **+ a real 291-byte `similarity.wasm`** + the generated [JS↔WASM bridge](./examples/compiled/similarity.glue.js). Python in, JS + WASM out — see [`examples/compiled/`](./examples/compiled).
 2. **Measured benchmark + parity, honest ranges.** The [dual-track benchmark](#the-dual-track-benchmark) reports LOC / token / bundle deltas as ranges across real code types — including where PythScript ships a *slightly larger* bundle. Functional parity is **102/102 tests green** ([run log](./proof/dual-track-parity-summary.txt)): each component built twice (React oracle + PythScript) through one shared contract. Nothing cherry-picked.
-3. **Third-party-verifiable CI.** The `examples checks` badge above runs the repo's checks on every push (compiled-output drift + `.psc` round-trip on pre-expanded fixtures) — green without any private code.
+3. **Third-party-verifiable CI.** The `examples checks` badge above runs the repo's checks on every push (`.ps`↔`.psc` pairing, checked-in compiled output present + a valid `.wasm` header, benchmark runs clean) — green without any private code. The full `.psc` round-trip + compile suite (`npm test`) runs locally with the published compiler.
 4. **937 compiler tests passing.** `cargo test --workspace` on the private compiler repo: **937 passed, 0 failed** across 8 test layers (CPython differential, browser pixel parity, auto-route E2E, fuzz). Full per-crate summary (lines sum to 937): [`proof/cargo-test-summary.txt`](./proof/cargo-test-summary.txt) — *private compiler repo, access on request*.
 
 ---
@@ -35,7 +35,7 @@ No server, no deploy, no compiler access needed — the evidence is checked into
 | **Edge-native** | ~1 KB gzipped runtime, <50 ms cold start — fits the Cloudflare Workers / Deno / Vercel Edge envelope |
 | **Auto-routing** | Pure-numeric functions compile to WebAssembly; everything else to JS — same source file, decided by signature analysis |
 | **`.psc` compression** | Optional token-lean superset (`.psc`) that expands deterministically to canonical `.ps` — every `.psc` round-trips byte-identically and compiles to identical JS |
-| **Production-grade** | 900+ passing compiler tests · 124K LOC/sec compile · runtime ~7,750× smaller than Pyodide |
+| **Production-grade** | 937 passing compiler tests · 124K LOC/sec compile · runtime ~7,750× smaller than Pyodide |
 
 PythScript is **not** an in-browser interpreter (no 5–10 MB Pyodide-style runtime) and **not** a limited transpiler. It is a real compiler: Python in, idiomatic JS + WASM out.
 
@@ -83,7 +83,9 @@ We don't claim numbers — we measure them, in the open, against a real applicat
 
 The frontend of **papertopia** (a multi-agent app) is built **twice**: once in React/TypeScript (the *oracle* — built first, the known-good reference) and once in PythScript (the *system under test*). Every component pair is checked by a shared contract test, and the deltas are reported as **ranges across code types**, never a single cherry-picked number.
 
-### Real-app aggregate (16 components)
+### Real-app aggregate (16 dual-track components)
+
+*The 16 here are the papertopia components built on both tracks; the repo's full `.ps`→`.psc` round-trip proof below covers all 21 `.ps` files (these 16 plus libs/pages).*
 
 | Metric | Result | Notes |
 |---|---|---|
@@ -198,7 +200,7 @@ The examples and benchmarks in this repository are public and reproducible witho
 
 ## Status
 
-PythScript is in active development toward a public v3.0 release. The compiler is production-grade (900+ tests, ~99% React + Next.js parity); the developer cloud, hosted playground, edge-deploy tooling, and broader library support are on the near-term roadmap.
+PythScript is in active development toward a public v3.0 release. The compiler is production-grade (937 tests, ~99% React + Next.js parity); the developer cloud, hosted playground, edge-deploy tooling, and broader library support are on the near-term roadmap.
 
 For access or to follow along, open an issue on this repository.
 
