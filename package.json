@@ -8,7 +8,8 @@
   "scripts": {
     "benchmark": "node scripts/benchmark.mjs",
     "test": "node scripts/verify.mjs",
-    "verify": "node scripts/verify.mjs"
+    "verify": "node scripts/verify.mjs",
+    "ci": "node scripts/ci-check.mjs"
   },
   "bin": {
     "pythscript-benchmark": "scripts/benchmark.mjs"

@@ -1,5 +1,7 @@
 # PythScript — Examples & Benchmarks
 
+[![examples checks](https://github.com/swetmr/pythscript-examples/actions/workflows/ci.yml/badge.svg)](https://github.com/swetmr/pythscript-examples/actions/workflows/ci.yml)
+
 **Write frontends in Python. Ship JavaScript + WebAssembly.**
 
 PythScript is a Rust-native compiler that turns Python source into JavaScript and WebAssembly with ~99% React + Next.js feature parity — so Python developers can build production web frontends without dealing with or debugging JavaScript.
@@ -11,6 +13,17 @@ This repository holds **public examples, documentation, and the dual-track bench
 - 📚 **Docs:** [`/docs`](./docs)
 
 > A hosted playground and benchmark dashboard are on the roadmap; until then, everything here is reproducible locally against published compiler binaries.
+
+---
+
+## Proof, by scrolling
+
+No server, no deploy, no compiler access needed — the evidence is checked into this repo:
+
+1. **Input → output, side by side.** [`examples/Counter.ps`](./examples/Counter.ps) sits next to its real compiled [`examples/compiled/Counter.js`](./examples/compiled/Counter.js); [`examples/similarity.ps`](./examples/similarity.ps) next to its compiled [`similarity.js`](./examples/compiled/similarity.js) **+ a real 291-byte `similarity.wasm`** + the generated [JS↔WASM bridge](./examples/compiled/similarity.glue.js). Python in, JS + WASM out — see [`examples/compiled/`](./examples/compiled).
+2. **Measured benchmark, honest ranges.** The [dual-track benchmark](#the-dual-track-benchmark) reports LOC / token / bundle deltas as ranges across real code types — including where PythScript ships a *slightly larger* bundle. Nothing cherry-picked.
+3. **Third-party-verifiable CI.** The `examples checks` badge above runs the repo's checks on every push (compiled-output drift + `.psc` round-trip on pre-expanded fixtures) — green without any private code.
+4. **937 compiler tests passing.** `cargo test --workspace` on the private compiler repo: **937 passed, 0 failed** across 8 test layers (CPython differential, browser pixel parity, auto-route E2E, fuzz). Full summary: [`proof/cargo-test-summary.txt`](./proof/cargo-test-summary.txt) — *private compiler repo, access on request*.
 
 ---
 
@@ -122,11 +135,16 @@ code at a tool boundary), never required.
 git clone https://github.com/swetmr/pythscript-examples
 cd pythscript-examples
 npm install
-npm run benchmark      # regenerates the LOC / token / bundle tables
-npm test               # runs the dual-track parity suite
+npm run benchmark      # LOC + byte deltas vs the React+TS oracles (no compiler needed)
+npm run ci             # compiler-free checks (what the CI badge runs)
+npm test               # .psc round-trip + compile — needs the published `pyths`
+                       #   (set PYTHS_BIN or put pyths on PATH; skips cleanly if absent)
 ```
 
-> **Tooling:** LOC via `cloc` · tokens via `tiktoken` (cl100k) on source · bundle as minified + gzipped output via Vite. Deltas are `(pythscript − react) / react`; negative = PythScript smaller.
+> **Tooling:** LOC + bytes measured by the bundled `scripts/benchmark.mjs` (zero
+> dependencies). Token (cl100k) and shipped-bundle (min+gzip) numbers in
+> [`/benchmarks`](./benchmarks) were measured with `tiktoken` + Vite against the
+> private compiler. Deltas are `(pythscript − react) / react`; negative = PythScript smaller.
 
 ---
 

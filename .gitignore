@@ -1,0 +1,6 @@
+# PythScript compiler cache
+**/.pyths/
+# Node
+node_modules/
+# OS
+.DS_Store

@@ -1,0 +1,20 @@
+name: examples checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      # Compiler-free checks only — these pass without the private `pyths`
+      # binary, so the badge is honestly green. The full .psc round-trip +
+      # compile suite (`npm test`) runs locally with the published compiler.
+      - run: node scripts/ci-check.mjs
