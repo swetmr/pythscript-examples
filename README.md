@@ -21,7 +21,7 @@ This repository holds **public examples, documentation, and the dual-track bench
 No server, no deploy, no compiler access needed — the evidence is checked into this repo:
 
 1. **Input → output, side by side.** [`examples/Counter.ps`](./examples/Counter.ps) sits next to its real compiled [`examples/compiled/Counter.js`](./examples/compiled/Counter.js); [`examples/similarity.ps`](./examples/similarity.ps) next to its compiled [`similarity.js`](./examples/compiled/similarity.js) **+ a real 291-byte `similarity.wasm`** + the generated [JS↔WASM bridge](./examples/compiled/similarity.glue.js). Python in, JS + WASM out — see [`examples/compiled/`](./examples/compiled).
-2. **Measured benchmark, honest ranges.** The [dual-track benchmark](#the-dual-track-benchmark) reports LOC / token / bundle deltas as ranges across real code types — including where PythScript ships a *slightly larger* bundle. Nothing cherry-picked.
+2. **Measured benchmark + parity, honest ranges.** The [dual-track benchmark](#the-dual-track-benchmark) reports LOC / token / bundle deltas as ranges across real code types — including where PythScript ships a *slightly larger* bundle. Functional parity is **102/102 tests green** ([run log](./proof/dual-track-parity-summary.txt)): each component built twice (React oracle + PythScript) through one shared contract. Nothing cherry-picked.
 3. **Third-party-verifiable CI.** The `examples checks` badge above runs the repo's checks on every push (compiled-output drift + `.psc` round-trip on pre-expanded fixtures) — green without any private code.
 4. **937 compiler tests passing.** `cargo test --workspace` on the private compiler repo: **937 passed, 0 failed** across 8 test layers (CPython differential, browser pixel parity, auto-route E2E, fuzz). Full summary: [`proof/cargo-test-summary.txt`](./proof/cargo-test-summary.txt) — *private compiler repo, access on request*.
 
@@ -78,7 +78,7 @@ The frontend of **papertopia** (a multi-agent app) is built **twice**: once in R
 | Lines of code | **−8.7%** | range −1% … −40%; biggest wins on markup-heavy code |
 | Source tokens (cl100k) | **−1.5%** | range −0.6% (presentational) … −16.8% (typed/logic-heavy) |
 | Shipped bundle (min+gzip) | **+7.7%** | PythScript ships *slightly larger* here — see below |
-| Functional parity | **dual-track suite green** | shared-contract React-vs-PythScript tests |
+| Functional parity | **102 / 102 tests green** | shared-contract React-vs-PythScript suite ([log](./proof/dual-track-parity-summary.txt)) |
 
 Two synthetic corpora bracket the high end of the token range: a typed ops
 dashboard (**−16.8%**) and a CRM with validation (**−14.3%**) — typed,

@@ -1,0 +1,21 @@
+papertopia v2 — dual-track parity suite (React reference vs PythScript)
+Command: npx vitest run
+Date: 2026-05-31   Result: 102 passed, 0 failed (23 test files)
+Source: private application repo (access on request). Each component is built
+twice — React/TypeScript (the known-good oracle) and PythScript (.ps) — and both
+run through ONE shared contract test. Where a .psc (compressed) sibling exists,
+it runs the same contract too. Identical assertions pass on every track.
+
+Representative shared-contract pairs (excerpt of the run):
+  Counter.tsx (React reference)            ✓ 4/4
+  Counter.ps  (PythScript implementation)  ✓ 4/4
+  Counter.psc (compressed PythScript)      ✓ 4/4
+  PaperList.tsx (React reference)          ✓
+  PaperList.ps  (PythScript)               ✓
+  PaperView.tsx / .ps                       ✓
+  PaperChunkViewer.tsx / .ps  (dual-track)  ✓
+  Dual-track parity (B-001 regression guard): initial DOM matches React vs PythScript ✓
+----------------------------------------------------------------------
+ Test Files  23 passed (23)
+      Tests  102 passed (102)
+----------------------------------------------------------------------
