@@ -170,6 +170,21 @@ PythScript takes a different path: **compile** Python to JS + WASM ahead of time
 
 ---
 
+## PythScript vs TypeScript
+
+"Just use TypeScript" is the obvious objection. But TypeScript checks types at compile time, then **erases them** — so JavaScript's *runtime* footguns survive it. PythScript carries semantics into the runtime, so it closes classes TS structurally can't:
+
+| JavaScript defect | After TypeScript | After PythScript |
+|---|---|---|
+| No integer type (precision past 2⁵³) | ✗ `number` is still IEEE-754 float | ✓ real arbitrary-precision `int` — `2**53 + 1` → `9007199254740993`, exact |
+| Coercion (`[] + {}`, `1 + "1"`) | ◐ typed at compile time, **coerces at runtime** | ✓ `[] + []` is `[]`; `1 + "1"` is a type error, not `"11"` |
+| Silent `undefined` / `NaN` | ◐ runtime values stay silent | ✓ fails loud — `xs[10]` → `IndexError`, `d["x"]` → `KeyError` |
+| Automatic Semicolon Insertion | ✗ same JS rules | ✓ gone — you write Python |
+
+**Honestly:** PythScript fixes the missing *integer* type, **not** floating-point rounding — `0.1 + 0.2` is still `0.30000000000000004` (that's IEEE-754, not a language defect). And it can't police the FFI boundary: data from the DOM, `JSON.parse`, or third-party JS is untyped at runtime. Every behavioral claim above is exercised by the compiler's CPython differential corpus (one of the [test layers](#proof-by-scrolling) behind the 1,047-test count). The full, TS-literate breakdown — which of JavaScript's classic ten defects actually survive TypeScript, and where PythScript does *not* differentiate — is in [**docs/pythscript-vs-typescript.md**](./docs/pythscript-vs-typescript.md).
+
+---
+
 ## Repository layout
 
 ```
@@ -180,7 +195,7 @@ PythScript takes a different path: **compile** Python to JS + WASM ahead of time
   app_1000.{ps,psc}          — CRM + validation (high end of the token range)
   react-equivalent/          — hand-written React+TS oracles for the above
 /benchmarks    — dual-track React-vs-PythScript measurements + methodology
-/docs          — SKILL.md language guide, WASM + .psc reference
+/docs          — SKILL.md language guide, WASM + .psc reference, PythScript-vs-TypeScript essay
 ```
 
 The two large synthetic samples (`dashboard_500`, `app_1000`) are the
