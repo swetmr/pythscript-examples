@@ -1,0 +1,31 @@
+# D2 — Fail-loud runtime semantics (the JS defect TypeScript erases)
+#
+# JavaScript fails *silently*: a missing property is `undefined`, and `1 + "a"`
+# coerces to "1a". TypeScript catches some of this at compile time — then ERASES
+# the types, so at runtime (on `any`, on JSON/DOM data, on a bad cast) the silent
+# behaviour returns. Python fails *loud*: it raises.
+#
+# This demo only counts if compiled PythScript actually emits the runtime guard
+# rather than lowering `d[k]` to a plain JS property access that returns undefined.
+#   Run:   pyths run 02_fail_loud.ps     # must THROW, not print `undefined`
+
+data = {"name": "Alice"}
+
+# Missing key -> KeyError at runtime.
+#   JS equivalent: `data.email` === undefined (silent, propagates as a later bug)
+print(data["email"])
+#   ACTUAL (PythScript):  Error [KeyError]: 'email'   ✅ fails loud  (see RESULTS.txt)
+#   JS object:            undefined                   ❌ silent
+
+# Type error -> a compile-time type error via `pyths check`, or a runtime
+# TypeError. JS equivalent: `1 + "a"` === "1a" (silent coercion).
+#   (left commented so the KeyError above is the one that throws at runtime)
+# print(1 + "a")
+#   ACTUAL (PythScript):  TypeError / compile-time "unsupported operand types"  ✅
+#   JS:                   "1a"                                                  ❌ coerced
+
+# Boundary notes (state them — this is what makes the claim survive a critic):
+#  - The guarantee is for PythScript-AUTHORED values. PythScript cannot police the
+#    FFI boundary: data from JSON.parse / the DOM / third-party JS arrives untyped.
+#  - Emitting these guards costs bundle size and a little speed — see 03_bundle_cost.md.
+#  - The honest line is "the runtime classes TypeScript erases," not "zero JS bugs."

@@ -1,0 +1,40 @@
+# D1 — Integer precision (the JS defect TypeScript does NOT fix)
+#
+# JavaScript has no integer type: `number` is an IEEE-754 double, so any integer
+# above Number.MAX_SAFE_INTEGER (2**53 - 1 ~ 9.007e15) loses precision *silently*.
+# TypeScript does not change this — `number` is still a float; `bigint` exists but
+# is a separate, opt-in type, not what arithmetic defaults to.
+#
+# PythScript has a real `int`, and it stays exact on BOTH paths:
+#   - JS path:   the int is hybrid Number/BigInt — exact past 2**53 via BigInt.
+#   - WASM path: pure-numeric functions auto-route to WebAssembly i64 (exact to ~9.2e18).
+#
+#   Run (JS path):   pyths run 01_integer_precision.ps
+#   Build (WASM):    pyths compile 01_integer_precision.ps --target js+wasm -o int_demo.js
+#                    node int_demo.js
+#
+# IMPORTANT — do NOT demo `0.1 + 0.2`. That is a *floating-point* problem that
+# Python shares (Python floats are IEEE-754 too). The integer case below is the
+# genuine, JS-specific win.
+
+def big_product(a: int, b: int) -> int:
+    return a * b
+
+def factorial(n: int) -> int:
+    result = 1
+    for i in range(2, n + 1):
+        result = result * i
+    return result
+
+# THE CLEAN DEMO: 123456789 * 987654321 = 121932631112635269  (odd x odd, > 2**53,
+# not exactly representable in float64 — so JS `number` rounds it).
+print(big_product(123456789, 987654321))
+#   PythScript int:    121932631112635269   ✅ exact
+#   JS  `number`:      121932631112635260   ❌ wrong (off by 9; see RESULTS.txt)
+
+# 20! = 2432902008176640000.  NOTE: 20! is *coincidentally* exact in float64
+# (it has enough factors of 2 to be representable), so JS gets this one right too
+# — it is NOT a precision-loss demo. We print it only to mark the i64 boundary
+# (i64 holds up to ~9.2e18; beyond that the int's arbitrary-precision promise
+# needs BigInt codegen — state which path a given value takes).
+print(factorial(20))

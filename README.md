@@ -181,7 +181,7 @@ PythScript takes a different path: **compile** Python to JS + WASM ahead of time
 | Silent `undefined` / `NaN` | ◐ runtime values stay silent | ✓ fails loud — `xs[10]` → `IndexError`, `d["x"]` → `KeyError` |
 | Automatic Semicolon Insertion | ✗ same JS rules | ✓ gone — you write Python |
 
-**Honestly:** PythScript fixes the missing *integer* type, **not** floating-point rounding — `0.1 + 0.2` is still `0.30000000000000004` (that's IEEE-754, not a language defect). And it can't police the FFI boundary: data from the DOM, `JSON.parse`, or third-party JS is untyped at runtime. Every behavioral claim above is exercised by the compiler's CPython differential corpus (one of the [test layers](#proof-by-scrolling) behind the 1,047-test count). The full, TS-literate breakdown — which of JavaScript's classic ten defects actually survive TypeScript, and where PythScript does *not* differentiate — is in [**docs/pythscript-vs-typescript.md**](./docs/pythscript-vs-typescript.md).
+**Honestly:** PythScript fixes the missing *integer* type, **not** floating-point rounding — `0.1 + 0.2` is still `0.30000000000000004` (that's IEEE-754, not a language defect). And it can't police the FFI boundary: data from the DOM, `JSON.parse`, or third-party JS is untyped at runtime. Every behavioral claim above is exercised by the compiler's CPython differential corpus (one of the [test layers](#proof-by-scrolling) behind the 1,047-test count). The full, TS-literate breakdown — which of JavaScript's classic ten defects actually survive TypeScript, and where PythScript does *not* differentiate — is in [**docs/pythscript-vs-typescript.md**](./docs/pythscript-vs-typescript.md). **Runnable proof with captured output:** [`examples/ts-correctness/`](./examples/ts-correctness) (`pyths run` the demos and see `121932631112635269` exact where JS gives `…260`, and a real `KeyError` throw where JS returns `undefined`).
 
 ---
 
@@ -194,6 +194,7 @@ PythScript takes a different path: **compile** Python to JS + WASM ahead of time
   dashboard_500.{ps,psc}     — typed ops dashboard (high end of the token range)
   app_1000.{ps,psc}          — CRM + validation (high end of the token range)
   react-equivalent/          — hand-written React+TS oracles for the above
+  ts-correctness/            — vs-TypeScript runtime-correctness demos + captured RESULTS.txt
 /benchmarks    — dual-track React-vs-PythScript measurements + methodology
 /docs          — SKILL.md language guide, WASM + .psc reference, PythScript-vs-TypeScript essay
 ```
