@@ -1,33 +1,42 @@
 papertopia v2 — dual-track parity suite (React reference vs PythScript)
 Command: npx vitest run
-Date: 2026-05-31   Result: 102 passed, 0 failed (23 test files)
+Date: 2026-06-29   Result: 184 passed, 0 failed (32 test files)   Compiler pin: pythscript 7f43401
 Source: private application repo (access on request). Each component is built
 twice — React/TypeScript (the known-good oracle) and PythScript (.ps) — and both
 run through ONE shared contract test; where a .psc (compressed) sibling exists, it
-runs the same contract too. The per-file test counts below sum to 102.
+runs the same contract too. The per-file test counts below sum to 184.
 ----------------------------------------------------------------------
-  components/AgentCard.test.tsx                        4 tests
-  components/Counter.test.tsx                         15 tests
-  components/GapsPanel.test.tsx                        4 tests
-  components/MetaCard.test.tsx                         2 tests
-  components/PaperChunkViewer.dualtrack.test.tsx       3 tests
-  components/PaperList.test.tsx                        8 tests
-  components/PaperView.test.tsx                        8 tests
-  components/PdfPreview.test.tsx                       2 tests
-  components/ReviewerVerdict.test.tsx                  2 tests
-  components/RunEventStream.test.tsx                   3 tests
-  components/StageTimeline.test.tsx                    3 tests
-  hooks/use_run_events.test.tsx                        4 tests
-  lib/decorators.test.ts                               5 tests
-  lib/errors.test.ts                                   4 tests
-  lib/similarity.ps.test.ts                            5 tests
-  lib/similarity.test.ts                               6 tests
-  pages/pages.test.tsx                                 2 tests
-  pages/Runs.test.tsx                                  3 tests
-  papertopia/dualtrack.test.tsx                        4 tests
-  papertopia/Papertopia.test.tsx                       3 tests
-  papertopia/PaperView.test.tsx                        3 tests
-  papertopia/StudioAgents.test.tsx                     4 tests
-  src/App.test.tsx                                     5 tests
+components/AgentCard.test.tsx                      4 tests
+components/ChatThread.test.tsx                     10 tests
+components/Counter.test.tsx                        15 tests
+components/DirectivePreview.test.tsx               7 tests
+components/GapsPanel.test.tsx                      4 tests
+components/MetaCard.test.tsx                       2 tests
+components/PaperChunkViewer.dualtrack.test.tsx     3 tests
+components/PaperList.test.tsx                      8 tests
+components/PaperView.test.tsx                      8 tests
+components/PdfPreview.test.tsx                     2 tests
+components/ReviewerVerdict.test.tsx                2 tests
+components/RunEventStream.test.tsx                 3 tests
+components/StageTimeline.test.tsx                  3 tests
+hooks/use_run_events.test.tsx                      4 tests
+lib/decorators.test.ts                             5 tests
+lib/errors.test.ts                                 4 tests
+lib/similarity.ps.test.ts                          5 tests
+lib/similarity.test.ts                             6 tests
+pages/BenchmarkDashboard.test.tsx                  6 tests
+pages/CompressionDash.test.tsx                     9 tests
+pages/FigureGallery.test.tsx                       3 tests
+pages/pages.test.tsx                               2 tests
+pages/PaperUpload.test.tsx                         6 tests
+pages/Runs.test.tsx                                3 tests
+pages/WasmDemo.test.tsx                            24 tests
+papertopia/ChatIntake.test.tsx                     4 tests
+papertopia/dualtrack.test.tsx                      4 tests
+papertopia/Papertopia.test.tsx                     3 tests
+papertopia/PaperView.test.tsx                      3 tests
+papertopia/SteerSidebar.test.tsx                   12 tests
+papertopia/StudioAgents.test.tsx                   4 tests
+src/App.test.tsx                                   6 tests
 ----------------------------------------------------------------------
-TOTAL: 102 passed, 0 failed across 23 files
+TOTAL: 184 passed, 0 failed across 32 test files
