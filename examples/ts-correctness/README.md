@@ -1,63 +1,59 @@
 # Correctness vs. TypeScript — verification examples
 
-Three runnable artifacts that **substantiate** PythScript's "what survives TypeScript" claim. They exist so
-the claim holds with **skeptical reviewers** — each one is honest about its boundary, because the argument
-only works if we don't over-reach. Captured runtime output is in [`RESULTS.txt`](./RESULTS.txt); the
-full breakdown is the [PythScript vs TypeScript essay](../../docs/pythscript-vs-typescript.md).
+Runnable artifacts that **substantiate** PythScript's "what survives TypeScript" claim — each honest about
+its boundary, because the argument only works if we don't over-reach.
 
-> **The claim, precisely:** TypeScript checks types at compile time, then **erases** them — so JavaScript's
-> *runtime* footguns survive it. PythScript carries semantics **into the runtime**. These demos prove the
-> runtime difference is real, not rhetorical. **We are not claiming "more type-safe than TypeScript"**
-> (TS's static type system is richer than Python's hints) — only that *runtime semantics* differ.
+**Why JavaScript appears in a "vs TypeScript" folder.** The competitor is **TypeScript**. JavaScript shows up
+because TypeScript checks types at compile time, then **erases** them — TS-compiled code *is* plain JS at
+runtime. So each demo is a **3-way** comparison: **PythScript**, what `tsc` does at **compile time**, and the
+**runtime** value (identical for TypeScript and JavaScript, since TS erased). Captured output:
+[`RESULTS.txt`](./RESULTS.txt). Full breakdown: the [PythScript vs TypeScript essay](../../docs/pythscript-vs-typescript.md).
 
-| # | Deliverable | Proves | Status |
-|---|---|---|---|
-| **D1** | [`01_integer_precision.ps`](./01_integer_precision.ps) | Integer precision beyond 2⁵³ that JS `number` silently loses — exact via PythScript's `int` (BigInt on the JS path; i64 on the WASM path) | ✅ verified — `121932631112635269` (exact) vs JS `121932631112635260` |
-| **D2** | [`02_fail_loud.ps`](./02_fail_loud.ps) | Compiled code **throws** on a missing key at runtime, not silent `undefined` | ✅ verified — throws `Error [KeyError]: 'email'` vs JS `undefined` |
-| **D3** | [`03_bundle_cost.md`](./03_bundle_cost.md) | The bundle-size **cost** of those runtime guards — owned, not hidden | ✅ owned — part of the measured +7.7% bundle |
+> **The claim, precisely:** TypeScript erases its types at runtime, so JavaScript's *runtime* footguns survive
+> it. PythScript carries semantics into the runtime. **We are not claiming "more type-safe than TypeScript"**
+> (TS's static type system is richer than Python's hints) — only that *runtime semantics* differ, and that
+> TS's compile-time guarantee disappears the moment data is `any` / from JSON / the DOM / a cast.
 
-## D1 — Integer precision (the honest version)
+| # | Deliverable | PythScript | TypeScript | JavaScript |
+|---|---|---|---|---|
+| **D1** integer precision | [`01_integer_precision.ps`](./01_integer_precision.ps) · [TS contrast](./01_integer_precision.contrast.ts) | ✅ `121932631112635269` (exact) | ❌ `tsc` no error → runtime `…260` | ❌ `…260` |
+| **D2** fail-loud | [`02_fail_loud.ps`](./02_fail_loud.ps) · [TS contrast](./02_fail_loud.contrast.ts) | ✅ throws `KeyError` | ◐ catches *typed* (`TS7053`); **erases** → `undefined` on `any`/JSON/DOM | ❌ `undefined` |
+| **D3** bundle cost | [`03_bundle_cost.md`](./03_bundle_cost.md) | owns the measured +7.7% bundle (honest trade) | — | — |
 
-**Demo it correctly.** The famous `0.1 + 0.2 ≠ 0.3` is a **floating-point** issue that **Python shares**
-(Python floats are IEEE-754 too) — *do not* use it as the example. The genuine, JS-specific defect is
-**no integer type**: JS `number` loses precision above `Number.MAX_SAFE_INTEGER` (2⁵³−1 ≈ 9.007e15).
-PythScript has a real `int` that stays exact (Number/BigInt on the JS path; auto-routed WASM `i64` for
-pure-numeric functions).
+## D1 — Integer precision (no integer type in JS *or* TS)
 
-- **Result:** `big_product(123456789, 987654321)` → `121932631112635269` (exact); the same multiply in JS
-  `number` → `121932631112635260` (wrong). Ship both so the contrast is undeniable.
-- **Boundary (stated, not hidden):** `factorial(20)` is *coincidentally* exact in float64, so JS gets it
-  right too — it is **not** a precision-loss demo. `i64` covers up to ~9.2e18; beyond that the int's
-  arbitrary-precision promise is the BigInt path. Off the WASM path, plain emitted JS uses BigInt for exact
-  integers.
+Not `0.1 + 0.2` — that is **floating-point**, which Python shares (don't claim it). The JS-specific defect is
+**no integer type**: `number` loses precision above 2⁵³. **TypeScript adds no integer type** — `tsc --strict`
+on [`01_integer_precision.contrast.ts`](./01_integer_precision.contrast.ts) reports **no error**, and the
+erased JS prints the wrong value, identical to plain JavaScript. PythScript's real `int` (Number/BigInt on the
+JS path; WASM `i64` on the auto-routed path) is the only one exact.
 
-## D2 — Fail-loud runtime semantics
+- **Boundary:** `factorial(20)` is *coincidentally* float-exact, so all three agree — it's **not** a
+  precision-loss demo; `big_product` is.
 
-Python **raises** (`KeyError`, `TypeError`); JavaScript **silently** returns `undefined` or coerces
-(`1 + "a" → "1a"`). This only counts if compiled PythScript actually emits the runtime guard rather than
-lowering `d[k]` to a plain JS property access.
+## D2 — Fail-loud (the one where TypeScript *partly* helps — stated honestly)
 
-- **Result:** running the compiled output **throws** `Error [KeyError]: 'email'`; the JS one-liner returns
-  `undefined` / coerces silently.
-- **Boundary:** the guarantee is for **PythScript-authored values** — PythScript **can't police the FFI
-  boundary** (`JSON.parse`, DOM, third-party JS arrive untyped). And the guards have a cost → D3.
+- **Case A — precisely-typed value:** TypeScript **catches** `data["email"]` at compile time
+  (`error TS7053: Property 'email' does not exist`). Credit where due. PythScript's `pyths check` does too.
+- **Case B — `any` (JSON.parse / DOM / fetch / a cast):** TypeScript **erases** and does **not** catch — `tsc`
+  reports no error and the runtime returns silent `undefined`, exactly like JS. PythScript **raises**
+  `KeyError` at runtime regardless of the static type.
+
+That's the honest line: *the runtime classes TypeScript erases*, not "more type-safe than TypeScript."
 
 ## D3 — The bundle-size cost (own it)
 
-Fail-loud guards and runtime checks are what JS developers omit for speed — so they cost bundle size. The
-[dual-track benchmark](../../README.md#the-dual-track-benchmark) already reports PythScript shipping a
-**~+7.7%** larger bundle; D3 attributes its character and states the trade plainly: *"we chose runtime
-safety; here's the price."* See [`03_bundle_cost.md`](./03_bundle_cost.md).
+Those runtime guards cost bundle size — the [dual-track benchmark](../../README.md#the-dual-track-benchmark)
+reports a measured **~+7.7%**. [`03_bundle_cost.md`](./03_bundle_cost.md) attributes its character and states
+the trade plainly. We don't hide it.
 
 ---
 
 ## Reproduce
 
 ```bash
-pyths run 01_integer_precision.ps     # → 121932631112635269  (exact int)
-pyths run 02_fail_loud.ps             # → throws KeyError: 'email'
-node -e "console.log(123456789 * 987654321)"   # → 121932631112635260  (JS number, wrong)
+pyths run 01_integer_precision.ps                      # PythScript → 121932631112635269 (exact int)
+pyths run 02_fail_loud.ps                              # PythScript → throws KeyError: 'email'
+tsc --strict --noEmit *.contrast.ts                    # TypeScript: no error → it does NOT catch these
+node -e "console.log(123456789 * 987654321)"           # TS/JS runtime → 121932631112635260 (wrong)
 ```
-
-*The honest line is "PythScript fixes the runtime classes TypeScript erases" — not "we beat TypeScript on
-type-safety." Demonstrated and bounded as above, the claim survives a critical room.*
